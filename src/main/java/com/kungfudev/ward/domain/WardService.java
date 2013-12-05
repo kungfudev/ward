@@ -1,5 +1,7 @@
 package com.kungfudev.ward.domain;
 
+import java.util.List;
+
 /**
  * User: Kevin W. Sewell
  * Date: 2013-12-05
@@ -7,6 +9,9 @@ package com.kungfudev.ward.domain;
  */
 public interface WardService {
 
-    Ward findByCoordinates(Double longitude, Double latitude);
+    Ward findOne(String id);
 
+    List<Ward> findAll();
+
+    Ward findByCoordinates(Double longitude, Double latitude);
 }

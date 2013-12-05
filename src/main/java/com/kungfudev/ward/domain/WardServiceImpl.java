@@ -1,6 +1,5 @@
 package com.kungfudev.ward.domain;
 
-import org.geotools.data.FeatureSource;
 import org.geotools.data.Query;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -16,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User: Kevin W. Sewell
@@ -32,6 +33,37 @@ public class WardServiceImpl implements WardService {
     private FilterFactory2 filterFactory;
 
     @Override
+    public Ward findOne(String id) {
+        return null;
+    }
+
+    @Override
+    public List<Ward> findAll() {
+
+        SimpleFeatureIterator simpleFeatureIterator = null;
+        try {
+
+            SimpleFeatureCollection simpleFeatureCollection = wardFeatureSource.getFeatures();
+            simpleFeatureIterator = simpleFeatureCollection.features();
+
+            List<Ward> wards = new ArrayList<>();
+            while(simpleFeatureIterator.hasNext()) {
+                SimpleFeature simpleFeature = simpleFeatureIterator.next();
+                wards.add(getWard(simpleFeature));
+            }
+
+            return wards;
+
+        } catch (IOException e) {
+            throw new RuntimeException();
+        } finally {
+            if (simpleFeatureIterator != null) {
+                simpleFeatureIterator.close();
+            }
+        }
+    }
+
+    @Override
     public Ward findByCoordinates(Double longitude, Double latitude) {
 
         Filter filter = filterFactory.contains(getGeomProperty(), getPoint(longitude, latitude));
@@ -44,18 +76,8 @@ public class WardServiceImpl implements WardService {
             SimpleFeatureCollection simpleFeatureCollection = wardFeatureSource.getFeatures(query);
             simpleFeatureIterator = simpleFeatureCollection.features();
             if(simpleFeatureIterator.hasNext()) {
-
                 SimpleFeature simpleFeature = simpleFeatureIterator.next();
-
-                Ward ward = new Ward();
-                ward.setProvince(new Province((String)simpleFeature.getAttribute("PROVINCE")));
-                ward.setMunicipality(new Municipality((String)simpleFeature.getAttribute("CAT_B"), (String)simpleFeature.getAttribute("MUNICNAME")));
-                ward.setId((String)simpleFeature.getAttribute("WARD_ID"));
-                ward.setNumber((Integer)simpleFeature.getAttribute("WARDNO"));
-                ward.setArea((Double)simpleFeature.getAttribute("Area"));
-                ward.setPopulation((Integer)simpleFeature.getAttribute("WARD_POP"));
-
-                return ward;
+                return getWard(simpleFeature);
             }
         } catch (IOException e) {
             throw new RuntimeException();
@@ -66,6 +88,23 @@ public class WardServiceImpl implements WardService {
         }
 
         return null;
+    }
+
+    private Ward getWard(SimpleFeature simpleFeature) {
+
+        Ward ward = new Ward();
+
+        ward.setId((String)simpleFeature.getAttribute("WARD_ID"));
+        ward.setNumber((Integer)simpleFeature.getAttribute("WARDNO"));
+        ward.setArea((Double)simpleFeature.getAttribute("Area"));
+        ward.setPopulation((Integer)simpleFeature.getAttribute("WARD_POP"));
+        ward.setProvince(new Province((String) simpleFeature.getAttribute("PROVINCE")));
+        ward.setMunicipality(new Municipality(
+                (String) simpleFeature.getAttribute("CAT_B"),
+                (String) simpleFeature.getAttribute("MUNICNAME"))
+        );
+
+        return ward;
     }
 
     private PropertyName getGeomProperty() {

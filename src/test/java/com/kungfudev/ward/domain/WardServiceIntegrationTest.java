@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.List;
+
 /**
  * User: Kevin W. Sewell
  * Date: 2013-12-05
@@ -23,9 +25,20 @@ public class WardServiceIntegrationTest {
     private WardService wardService;
 
     @Test
-    public void shouldFindByGpsCoordinates() throws Exception {
+    public void shouldFindByCoordinates() throws Exception {
 
-        System.out.println(wardService.findByCoordinates(18.418207, -33.929403));
-        System.out.println(wardService.findByCoordinates(18.837233, -33.958596));
+        Assert.assertNotNull(wardService.findByCoordinates(18.418207, -33.929403));
+        Assert.assertNotNull(wardService.findByCoordinates(18.837233, -33.958596));
+    }
+
+    @Test
+    public void shouldFindByAll() throws Exception {
+
+        List<Ward> wards = wardService.findAll();
+        Assert.assertNotNull(wards);
+
+        for (Ward ward : wards) {
+            System.out.println(ward);
+        }
     }
 }

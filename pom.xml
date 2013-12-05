@@ -20,7 +20,7 @@
     </properties>
 
     <build>
-        <finalName>ward-locator</finalName>
+        <finalName>ward</finalName>
 
         <pluginManagement>
             <plugins>
