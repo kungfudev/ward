@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="wardShapefileDataStore" class="org.geotools.data.shapefile.ShapefileDataStore">
+        <constructor-arg name="url" value="classpath:/META-INF/shp/Wards2011/Wards2011.shp"/>
+    </bean>
+
+    <bean id="wardFeatureSource" factory-bean="wardShapefileDataStore" factory-method="getFeatureSource">
+        <constructor-arg name="typeName" value="Wards2011"/>
+    </bean>
+
+    <bean id="filterFactory" class="org.geotools.factory.CommonFactoryFinder" factory-method="getFilterFactory2"/>
+
+</beans>
