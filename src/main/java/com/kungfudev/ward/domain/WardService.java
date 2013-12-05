@@ -13,5 +13,9 @@ public interface WardService {
 
     List<Ward> findAll();
 
+    List<Ward> findByProvinceName(String provinceName);
+
+    List<Ward> findByMunicipalityId(String municipalityId);
+
     Ward findByCoordinates(Double longitude, Double latitude);
 }

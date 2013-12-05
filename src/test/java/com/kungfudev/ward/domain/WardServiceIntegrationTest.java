@@ -36,6 +36,23 @@ public class WardServiceIntegrationTest {
 
         List<Ward> wards = wardService.findAll();
         Assert.assertNotNull(wards);
+        Assert.assertTrue(wards.size() > 0);
+    }
+
+    @Test
+    public void shouldFindByProvinceName() throws Exception {
+
+        List<Ward> wards = wardService.findByProvinceName("Western Cape");
+        Assert.assertNotNull(wards);
+        Assert.assertTrue(wards.size() > 0);
+    }
+
+    @Test
+    public void shouldFindByMunicipalityId() throws Exception {
+
+        List<Ward> wards = wardService.findByMunicipalityId("CPT");
+        Assert.assertNotNull(wards);
+        Assert.assertTrue(wards.size() > 0);
     }
 
     @Test

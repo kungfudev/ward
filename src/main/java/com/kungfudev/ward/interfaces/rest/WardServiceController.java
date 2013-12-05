@@ -31,14 +31,7 @@ public class WardServiceController {
 
         List<Ward> wards = wardService.findAll();
 
-        Collections.sort(wards, new Comparator<Ward>() {
-            @Override
-            public int compare(Ward ward1, Ward ward2) {
-                return ward1.getId().compareTo(ward2.getId());
-            }
-        });
-
-        return wards;
+        return sort(wards);
     }
 
     @ResponseBody
@@ -53,5 +46,34 @@ public class WardServiceController {
                                   @RequestParam("latitude")  Double latitude) {
 
         return wardService.findByCoordinates(longitude, latitude);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/search/findByProvinceName")
+    public List<Ward> findByProvinceName(@RequestParam("provinceName") String provinceName) {
+
+        List<Ward> wards = wardService.findByProvinceName(provinceName);
+
+        return sort(wards);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/search/findByMunicipalityId")
+    public List<Ward> findByMunicipalityId(@RequestParam("municipalityId") String municipalityId) {
+
+        List<Ward> wards = wardService.findByMunicipalityId(municipalityId);
+
+        return sort(wards);
+    }
+
+    private static List<Ward> sort(List<Ward> wards) {
+        Collections.sort(wards, new Comparator<Ward>() {
+            @Override
+            public int compare(Ward ward1, Ward ward2) {
+                return ward1.getId().compareTo(ward2.getId());
+            }
+        });
+
+        return wards;
     }
 }

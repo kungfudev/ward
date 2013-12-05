@@ -68,6 +68,22 @@ public class WardServiceImpl implements WardService {
     }
 
     @Override
+    public List<Ward> findByProvinceName(String provinceName) {
+
+        Filter filter = filterFactory.equals(getProvinceNameProperty(), getString(provinceName));
+
+        return findByFilter(filter);
+    }
+
+    @Override
+    public List<Ward> findByMunicipalityId(String municipalityId) {
+
+        Filter filter = filterFactory.equals(getMunicipalityIdProperty(), getString(municipalityId));
+
+        return findByFilter(filter);
+    }
+
+    @Override
     public Ward findByCoordinates(Double longitude, Double latitude) {
 
         Filter filter = filterFactory.contains(getGeomProperty(), getPoint(longitude, latitude));
@@ -99,6 +115,32 @@ public class WardServiceImpl implements WardService {
         return null;
     }
 
+    private List<Ward> findByFilter(Filter filter) {
+
+        Query query = new Query("Wards2011", filter);
+
+        SimpleFeatureIterator simpleFeatureIterator = null;
+
+        try {
+            SimpleFeatureCollection simpleFeatureCollection = wardFeatureSource.getFeatures(query);
+            simpleFeatureIterator = simpleFeatureCollection.features();
+            List<Ward> wards = new ArrayList<>();
+            while(simpleFeatureIterator.hasNext()) {
+                SimpleFeature simpleFeature = simpleFeatureIterator.next();
+                wards.add(getWard(simpleFeature));
+            }
+
+            return wards;
+
+        } catch (IOException e) {
+            throw new RuntimeException();
+        } finally {
+            if (simpleFeatureIterator != null) {
+                simpleFeatureIterator.close();
+            }
+        }
+    }
+
     private Ward getWard(SimpleFeature simpleFeature) {
 
         Ward ward = new Ward();
@@ -118,6 +160,14 @@ public class WardServiceImpl implements WardService {
 
     private PropertyName getGeomProperty() {
         return filterFactory.property("the_geom");
+    }
+
+    private PropertyName getMunicipalityIdProperty() {
+        return filterFactory.property("CAT_B");
+    }
+
+    private PropertyName getProvinceNameProperty() {
+        return filterFactory.property("PROVINCE");
     }
 
     private PropertyName getWardIdProperty() {
