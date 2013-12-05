@@ -32,13 +32,17 @@ public class WardServiceIntegrationTest {
     }
 
     @Test
-    public void shouldFindByAll() throws Exception {
+    public void shouldFindAll() throws Exception {
 
         List<Ward> wards = wardService.findAll();
         Assert.assertNotNull(wards);
+    }
 
-        for (Ward ward : wards) {
-            System.out.println(ward);
-        }
+    @Test
+    public void shouldFindOne() throws Exception {
+
+        Ward ward = wardService.findOne("10204022");
+        Assert.assertNotNull(ward);
+        System.out.println(ward);
     }
 }

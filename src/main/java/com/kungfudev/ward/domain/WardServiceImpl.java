@@ -9,6 +9,7 @@ import org.geotools.geometry.jts.JTS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.PropertyName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,10 @@ public class WardServiceImpl implements WardService {
 
     @Override
     public Ward findOne(String id) {
-        return null;
+
+        Filter filter = filterFactory.equals(getWardIdProperty(), getString(id));
+
+        return findOneByFilter(filter);
     }
 
     @Override
@@ -67,6 +71,11 @@ public class WardServiceImpl implements WardService {
     public Ward findByCoordinates(Double longitude, Double latitude) {
 
         Filter filter = filterFactory.contains(getGeomProperty(), getPoint(longitude, latitude));
+
+        return findOneByFilter(filter);
+    }
+
+    private Ward findOneByFilter(Filter filter) {
 
         Query query = new Query("Wards2011", filter);
 
@@ -111,8 +120,15 @@ public class WardServiceImpl implements WardService {
         return filterFactory.property("the_geom");
     }
 
+    private PropertyName getWardIdProperty() {
+        return filterFactory.property("WARD_ID");
+    }
+
     private Literal getPoint(double latidude, double longitude) {
         return filterFactory.literal(JTS.toGeometry(new DirectPosition2D(latidude, longitude)));
     }
 
+    private Literal getString(String string) {
+        return filterFactory.literal(string);
+    }
 }
